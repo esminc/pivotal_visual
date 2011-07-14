@@ -3,6 +3,7 @@
 import HTMLParser
 import httplib
 import base64
+import time
 
 class TrackerAuthParser(HTMLParser.HTMLParser):
     def __init__(self):
@@ -67,6 +68,10 @@ class Tracker(object):
         conn = httplib.HTTPSConnection('www.pivotaltracker.com')
         conn.request('GET', '/services/v3/projects/%s/iterations'%(project_id), '', headers)
         parser = IterationsAndStoriesParser()
-        parser.feed(conn.getresponse().read())
+        contents = conn.getresponse().read()
+        f = open("iterations.%s.%s.xml"%(project_id, time.strftime('%Y%m%d%H%M%S')), "w")
+        f.write(contents)
+        f.close()
+        parser.feed(contents)
         return parser.iterations
 
