@@ -2,7 +2,9 @@
 
 import pygame
 import random
+import time
 
+from layout import FillLayout
 class Visual(object):
     def start(self):
         pygame.init()
@@ -22,19 +24,16 @@ class Visual(object):
         rect = ((0, iteration * self.iteration_height), (299, (iteration + 1) * self.iteration_height))
         w = rect[1][0] - rect[0][0]
         h = rect[1][1] - rect[0][1]
-        green = 0, 255, 0
+        layout = FillLayout(width=w, height=h)
         for s in stories:
             est = int(s.get('estimate', 0))
             if est < 0: continue
             r = est * 5 + 2
-            if w - r * 2 <= 0:
-                x = w / 2
-            else:
-                x = random.randint(r, w - r)
-            if h - r * 2 <= 0:
-                y = h / 2
-            else:
-                y = random.randint(r, h - r)
-            pygame.draw.circle(self.screen, green, (x, y + self.iteration_height * iteration), r, 1)
-            pygame.display.flip()
+            layout.add_circle(s, r)
+        layout.stabilize()
+
+        green = 0, 255, 0
+        for shape in layout.shapes:
+            pygame.draw.circle(self.screen, green, (int(shape.x), int(shape.y) + self.iteration_height * iteration), int(shape.radius), 1)
+        pygame.display.flip()
 
