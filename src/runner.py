@@ -2,17 +2,34 @@
 
 from pprint import pprint
 import ConfigParser
+import sys
 
 from tracker import Tracker
 from visual import Visual
 
-def main():
-    config = ConfigParser.ConfigParser()
-    config.read('config.ini')
+def iterations_from_server(config):
     tracker = Tracker()
     tracker.authenticate(config.get('tracker', 'username'), config.get('tracker', 'password'))
     iterations = tracker.get_stories(config.get('tracker', 'project_id'))
+    return iterations
 
+def iterations_from_file(config, filename):
+    tracker = Tracker()
+    f = open(filename)
+    contents = ''
+    for l in f: contents += l
+    f.close()
+    iterations = tracker.parse_stories(contents)
+    return iterations
+
+def main():
+    config = ConfigParser.ConfigParser()
+    config.read('config.ini')
+
+    if len(sys.argv) >= 2:
+        iterations = iterations_from_file(config, sys.argv[1])
+    else:
+        iterations = iterations_from_server(config)
     vis = Visual()
     vis.start()
     vis.draw_iteration_boxes(len(iterations))

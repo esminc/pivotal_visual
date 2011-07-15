@@ -67,11 +67,14 @@ class Tracker(object):
         headers = {'X-TrackerToken': self.token }
         conn = httplib.HTTPSConnection('www.pivotaltracker.com')
         conn.request('GET', '/services/v3/projects/%s/iterations'%(project_id), '', headers)
-        parser = IterationsAndStoriesParser()
         contents = conn.getresponse().read()
         f = open("iterations.%s.%s.xml"%(project_id, time.strftime('%Y%m%d%H%M%S')), "w")
         f.write(contents)
         f.close()
+        return self.parse_stories(contents)
+
+    def parse_stories(self, contents):
+        parser = IterationsAndStoriesParser()
         parser.feed(contents)
         return parser.iterations
 

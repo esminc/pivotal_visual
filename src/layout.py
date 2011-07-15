@@ -31,7 +31,7 @@ class FillLayout(object):
         for s in self.shapes:
             fx = fy = 0.0
 
-            # apply strong forth not to be within rect
+            # apply strong forth to be within rect
             if s.x - s.radius < 0:
                 fx += -(s.x - s.radius)
             if self.width < s.x + s.radius:
@@ -41,7 +41,7 @@ class FillLayout(object):
             if self.height < s.y + s.radius:
                 fy += self.height - (s.y + s.radius)
 
-            # apply weak forth not to be within rect
+            # apply weak forth to be within rect
             if 0 < s.x - s.radius < s.radius:
                 fx += -(s.x - 2 * s.radius) / 8.0
             if self.width - s.radius < s.x + s.radius < self.width:
