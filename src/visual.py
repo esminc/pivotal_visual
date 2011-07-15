@@ -9,6 +9,7 @@ class Visual(object):
     def start(self):
         pygame.init()
         self.screen = pygame.display.set_mode((300, 600))
+        self.drawings = {}
 
     def draw_iteration_boxes(self, iteration_count):
         white = 255, 255, 255
@@ -33,7 +34,16 @@ class Visual(object):
         layout.stabilize()
 
         green = 0, 255, 0
+        group = pygame.sprite.Group()
         for shape in layout.shapes:
-            pygame.draw.circle(self.screen, green, (int(shape.x), int(shape.y) + self.iteration_height * iteration), int(shape.radius), 1)
+            sprite = pygame.sprite.DirtySprite(group)
+            sprite.blendmode = pygame.BLEND_ADD
+            sprite.image = pygame.Surface((shape.radius * 2, shape.radius * 2))
+            sprite.rect = ((int(shape.x - shape.radius), int(shape.y  - shape.radius+ self.iteration_height * iteration)), (int(shape.x + shape.radius), int(shape.y + shape.radius + self.iteration_height * iteration)))
+            pygame.draw.circle(sprite.image, green, (shape.radius, shape.radius), int(shape.radius), 1)
+
+            #pygame.draw.circle(self.screen, green, (int(shape.x), int(shape.y) + self.iteration_height * iteration), int(shape.radius), 1)
+
+        group.draw(self.screen)
         pygame.display.flip()
 

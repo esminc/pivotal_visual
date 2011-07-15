@@ -14,7 +14,7 @@ def iterations_from_server(config):
     return iterations
 
 def iterations_from_file(config, filename):
-    tracker = Tracker()
+    tracker = Tracker(dbdir=config.get('tracker', 'local_store_directory'))
     f = open(filename)
     contents = ''
     for l in f: contents += l
