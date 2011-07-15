@@ -1,5 +1,6 @@
 #coding: utf-8
 
+import os
 import HTMLParser
 import httplib
 import base64
@@ -55,6 +56,9 @@ class IterationsAndStoriesParser(HTMLParser.HTMLParser):
 
 
 class Tracker(object):
+    def __init__(self, dbdir):
+        self.dbdir = dbdir
+
     def authenticate(self, username, password):
         headers = {'Authorization': base64.encodestring('%s:%s' % (username, password)) }
         conn = httplib.HTTPSConnection('www.pivotaltracker.com')
@@ -68,7 +72,7 @@ class Tracker(object):
         conn = httplib.HTTPSConnection('www.pivotaltracker.com')
         conn.request('GET', '/services/v3/projects/%s/iterations'%(project_id), '', headers)
         contents = conn.getresponse().read()
-        f = open("iterations.%s.%s.xml"%(project_id, time.strftime('%Y%m%d%H%M%S')), "w")
+        f = open(self.dbdir + os.sep + "iterations.%s.%s.xml"%(project_id, time.strftime('%Y%m%d%H%M%S')), "w")
         f.write(contents)
         f.close()
         return self.parse_stories(contents)

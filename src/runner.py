@@ -8,7 +8,7 @@ from tracker import Tracker
 from visual import Visual
 
 def iterations_from_server(config):
-    tracker = Tracker()
+    tracker = Tracker(dbdir=config.get('tracker', 'local_store_directory'))
     tracker.authenticate(config.get('tracker', 'username'), config.get('tracker', 'password'))
     iterations = tracker.get_stories(config.get('tracker', 'project_id'))
     return iterations
