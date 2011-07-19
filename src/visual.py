@@ -37,8 +37,8 @@ class Visual(object):
         group = pygame.sprite.Group()
         for shape in layout.shapes:
             sprite = pygame.sprite.DirtySprite(group)
-            sprite.blendmode = pygame.BLEND_ADD
-            sprite.image = pygame.Surface((shape.radius * 2, shape.radius * 2))
+            sprite.image = pygame.Surface((shape.radius * 2, shape.radius * 2), flags=pygame.SRCALPHA)
+            sprite.image.fill((0, 0, 0, 0))
             sprite.rect = ((int(shape.x - shape.radius), int(shape.y  - shape.radius+ self.iteration_height * iteration)), (int(shape.x + shape.radius), int(shape.y + shape.radius + self.iteration_height * iteration)))
             pygame.draw.circle(sprite.image, green, (shape.radius, shape.radius), int(shape.radius), 1)
 
