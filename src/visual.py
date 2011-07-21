@@ -10,6 +10,10 @@ class Visual(object):
     BOX_FRAME_COLOR = 255, 255, 255
     BOX_FILL_COLOR = 0, 0, 0
 
+    STORY_ACCEPTED_COLOR = 128, 128, 128
+    STORY_WIP_COLOR = 255, 128, 128
+    STORY_UNSTARTED_COLOR = 0, 255, 0
+
     def start(self):
         pygame.init()
         self.screen = pygame.display.set_mode((500, 800))
@@ -18,8 +22,6 @@ class Visual(object):
         self.iteration_area = pygame.Rect(100, 100, 300, 600)
 
     def draw_iteration_boxes(self, iteration_count):
-        Visual.BOX_FRAME_COLOR = 255, 255, 255
-        Visual.BOX_FILL_COLOR = 0, 0, 0
         self.iteration_count = iteration_count
         self.iteration_height = self.iteration_area.height / iteration_count
         for it in range(iteration_count):
@@ -44,7 +46,6 @@ class Visual(object):
             layout.add_circle(s, r)
         layout.stabilize()
 
-        green = 0, 255, 0
         group = pygame.sprite.Group()
         for shape in layout.shapes:
             sprite = pygame.sprite.DirtySprite(group)
@@ -56,7 +57,11 @@ class Visual(object):
                                       int(shape.y + shape.radius + self.iteration_height * iteration))
             sprite.rect.left += self.iteration_area.left
             sprite.rect.top += self.iteration_area.top
-            pygame.draw.circle(sprite.image, green, (shape.radius, shape.radius), int(shape.radius), 1)
+            state = shape.key['current_state']
+            if state == 'accepted': color = Visual.STORY_ACCEPTED_COLOR
+            elif state == 'unstarted': color = Visual.STORY_UNSTARTED_COLOR
+            else: color = Visual.STORY_WIP_COLOR
+            pygame.draw.circle(sprite.image, color, (shape.radius, shape.radius), int(shape.radius), 1)
 
         group.draw(self.screen)
         pygame.display.flip()
