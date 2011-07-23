@@ -3,6 +3,7 @@
 import pygame
 import random
 import time
+import math
 
 from layout import FillLayout
 
@@ -42,7 +43,7 @@ class Visual(object):
         for s in stories:
             est = int(s.get('estimate', 0))
             if est < 0: continue
-            r = est * 5 + 2
+            r = int(((est * 5) ** 0.7) * 2) + 3
             layout.add_circle(s, r)
         layout.stabilize()
 
@@ -61,6 +62,7 @@ class Visual(object):
             if state == 'accepted': color = Visual.STORY_ACCEPTED_COLOR
             elif state == 'unstarted': color = Visual.STORY_UNSTARTED_COLOR
             else: color = Visual.STORY_WIP_COLOR
+            pygame.draw.circle(sprite.image, color+(128,), (shape.radius, shape.radius), int(shape.radius))
             pygame.draw.circle(sprite.image, color, (shape.radius, shape.radius), int(shape.radius), 1)
 
         group.draw(self.screen)
