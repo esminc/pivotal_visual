@@ -12,12 +12,14 @@ class FillLayout(object):
         self.height = height
         self.shapes = []
 
-    def add_circle(self, key, radius):
+    def add_circle(self, key, radius, seed=None):
         shape = Shape()
         shape.key = key
         shape.radius = radius
-        shape.x = random.randint(0, self.width - 1)
-        shape.y = random.randint(0, self.height - 1)
+        if seed:
+            random.seed(seed)
+        shape.x = int(random.random() * self.width)
+        shape.y = int(random.random() * self.height)
         self.shapes.append(shape)
 
     def stabilize(self, max_trial=100, minimum=1.0):

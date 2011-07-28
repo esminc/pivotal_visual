@@ -53,7 +53,7 @@ class Visual(object):
             est = int(s.get('estimate', 0))
             if est < 0: continue
             r = int(((est * 5) ** 0.7) * 2) + 3
-            layout.add_circle(s, r)
+            layout.add_circle(s, r, seed = int(s.get('id')))
         layout.stabilize()
 
         group = pygame.sprite.Group()
