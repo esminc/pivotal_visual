@@ -39,40 +39,34 @@ class Visual(object):
                                      self.iteration_area.top + it * self.iteration_height,
                                      self.iteration_area.width - 1,
                                      self.iteration_height + 1)
-            inner_rect = pygame.Rect(frame_rect.left + 1, frame_rect.top + 1, frame_rect.width - 2, frame_rect.height - 2)
+            inner_rect = pygame.Rect(frame_rect.left + 1,
+                                     frame_rect.top + 1,
+                                     frame_rect.width - 2,
+                                     frame_rect.height - 2)
             pygame.draw.rect(self.screen, Visual.BOX_FRAME_COLOR, frame_rect)
             pygame.draw.rect(self.screen, Visual.BOX_FILL_COLOR, inner_rect)
         pygame.display.flip()
 
-    def draw_stories_for_iteration(self, stories, iteration):
-        rect = ((0, iteration * self.iteration_height), (299, (iteration + 1) * self.iteration_height))
+    def build_layout(self, rect, stories):
         w = rect[1][0] - rect[0][0]
         h = rect[1][1] - rect[0][1]
         layout = FillLayout(width=w, height=h)
         for s in stories:
-            est = int(s.get('estimate', 0))
+            est = int(s.get('estimate', -1))
             if est < 0: continue
             r = int(((est * 5) ** 0.7) * 2) + 3
             layout.add_circle(s, r, seed = int(s.get('id')))
         layout.stabilize()
+        return layout
+
+    def draw_stories_for_iteration(self, stories, iteration):
+        rect = ((0, iteration * self.iteration_height), (299, (iteration + 1) * self.iteration_height))
+        layout = self.build_layout(rect, stories)
 
         group = pygame.sprite.Group()
         for shape in layout.shapes:
             sprite = pygame.sprite.DirtySprite(group)
-            sprite.image = pygame.Surface((shape.radius * 2, shape.radius * 2), flags=pygame.SRCALPHA)
-            sprite.image.fill((0, 0, 0, 0))
-            sprite.rect = pygame.Rect(int(shape.x - shape.radius),
-                                      int(shape.y  - shape.radius + self.iteration_height * iteration),
-                                      int(shape.x + shape.radius),
-                                      int(shape.y + shape.radius + self.iteration_height * iteration))
-            sprite.rect.left += self.iteration_area.left
-            sprite.rect.top += self.iteration_area.top
-            state = shape.key['current_state']
-            if state == 'accepted': color = Visual.STORY_ACCEPTED_COLOR
-            elif state == 'unstarted': color = Visual.STORY_UNSTARTED_COLOR
-            else: color = Visual.STORY_WIP_COLOR
-            pygame.draw.circle(sprite.image, color+(192,), (shape.radius, shape.radius), int(shape.radius))
-            pygame.draw.circle(sprite.image, color, (shape.radius, shape.radius), int(shape.radius), 1)
+            self.draw_single_story(shape, sprite, iteration)
 
         group.draw(self.screen)
         pygame.display.flip()
@@ -117,3 +111,19 @@ class Visual(object):
             return datetime[:-4]
         else:
             return datetime
+
+    def draw_single_story(self, shape, sprite, iteration):
+        sprite.image = pygame.Surface((shape.radius * 2, shape.radius * 2), flags=pygame.SRCALPHA)
+        sprite.image.fill((0, 0, 0, 0))
+        sprite.rect = pygame.Rect(int(shape.x - shape.radius),
+                                  int(shape.y  - shape.radius + self.iteration_height * iteration),
+                                  int(shape.x + shape.radius),
+                                  int(shape.y + shape.radius + self.iteration_height * iteration))
+        sprite.rect.left += self.iteration_area.left
+        sprite.rect.top += self.iteration_area.top
+        state = shape.key['current_state']
+        if state == 'accepted': color = Visual.STORY_ACCEPTED_COLOR
+        elif state == 'unstarted': color = Visual.STORY_UNSTARTED_COLOR
+        else: color = Visual.STORY_WIP_COLOR
+        pygame.draw.circle(sprite.image, color+(192,), (shape.radius, shape.radius), int(shape.radius))
+        pygame.draw.circle(sprite.image, color, (shape.radius, shape.radius), int(shape.radius), 1)
