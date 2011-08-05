@@ -1,0 +1,33 @@
+= Summary
+
+. This program simply visualize a whole pivotal tracker project showing each stories as 'bubbles.'  The main purpose of this tools is to grasp the 'roughness' of the future of the project, or how adequately future iterations are planned showing the distribution of sizes of stories.
+
+. This tool runs as standalone program and access pivotaltracker.com to access your project's information then display a single image showing the current status of the project.
+
+
+= How to use
+
+1. First you need to write your account info and project id in your config.ini file.  Create src/config.ini copying from config.ini.sample and overwrite each entries.
+
+2. Run the program with
+% cd src
+% python runner.py
+
+3. To close the image, input 'Enter' or ^C in the console.
+
+. At this stage, that's all the program does!
+
+. There is an option to store current status of the project on local drive on each execution.  To use, specify 'local_store_directory' in [tracker] section of config.ini.  This must be a path of a writable directory.
+
+. Saved project status can be used like:
+% python runner.py <store/path/filename>
+
+
+= Concept
+
+. In an agile project, stories should be in adequate sizes.  'Adequate' can mean many things -- in the next-to-current iteration, all stories need to be broken into fairly small chunks, have clear goals, and well understood by the project members.  In the later iterations, bigger stories or 'themes' are acceptable.  If you're planning an iteration one year in the future, all stories will be vague and very large.
+
+. When you see stories in the whole project, near-future stroies should be small and far-future stories should be large.
+
+. The project members need to see not only the current/next iterations but iterations in the future and make sure they have workable plan.   As your project progresses, there are times you need to break large stories into smaller chunks to prepare for now-near-future iterations.  If you miss such chances, your team suddenly realize that their next iteration have huge and uncertain monster stories.
+
