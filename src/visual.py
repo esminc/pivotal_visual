@@ -8,19 +8,21 @@ import math
 from layout import FillLayout
 
 class Visual(object):
-    BOX_FRAME_COLOR = 255, 255, 255
-    BOX_FILL_COLOR = 0, 0, 0
+    BACKGROUND_COLOR = 255, 255, 255
+    BOX_FRAME_COLOR = 64, 64, 64
+    BOX_FILL_COLOR = 120, 120, 120
 
-    STORY_ACCEPTED_COLOR = 118, 235, 107
-    STORY_WIP_COLOR = 243, 243, 109
-    STORY_UNSTARTED_COLOR = 180, 180, 180
+    STORY_ACCEPTED_COLOR = 92, 255, 64
+    STORY_WIP_COLOR = 255, 255, 92
+    STORY_UNSTARTED_COLOR = 64, 64, 64
 
-    ITERATOIN_TEXT_COLOR = 255, 255, 255
+    ITERATOIN_TEXT_COLOR = 0, 0, 0
 
     def start(self):
         pygame.init()
         pygame.font.init()
         self.screen = pygame.display.set_mode((500, 800))
+        self.screen.fill(Visual.BACKGROUND_COLOR)
         self.font = pygame.font.SysFont('', 28)
         self.drawings = {}
 
@@ -33,7 +35,7 @@ class Visual(object):
             frame_rect = pygame.Rect(self.iteration_area.left,
                                      self.iteration_area.top + it * self.iteration_height,
                                      self.iteration_area.width - 1,
-                                     self.iteration_height)
+                                     self.iteration_height + 1)
             inner_rect = pygame.Rect(frame_rect.left + 1, frame_rect.top + 1, frame_rect.width - 2, frame_rect.height - 2)
             pygame.draw.rect(self.screen, Visual.BOX_FRAME_COLOR, frame_rect)
             pygame.draw.rect(self.screen, Visual.BOX_FILL_COLOR, inner_rect)
