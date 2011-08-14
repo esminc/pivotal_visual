@@ -11,9 +11,9 @@ class Visual(object):
     BOX_FRAME_COLOR = 255, 255, 255
     BOX_FILL_COLOR = 0, 0, 0
 
-    STORY_ACCEPTED_COLOR = 128, 128, 128
-    STORY_WIP_COLOR = 255, 128, 128
-    STORY_UNSTARTED_COLOR = 0, 255, 0
+    STORY_ACCEPTED_COLOR = 118, 235, 107
+    STORY_WIP_COLOR = 243, 243, 109
+    STORY_UNSTARTED_COLOR = 180, 180, 180
 
     def start(self):
         pygame.init()
@@ -62,7 +62,7 @@ class Visual(object):
             if state == 'accepted': color = Visual.STORY_ACCEPTED_COLOR
             elif state == 'unstarted': color = Visual.STORY_UNSTARTED_COLOR
             else: color = Visual.STORY_WIP_COLOR
-            pygame.draw.circle(sprite.image, color+(128,), (shape.radius, shape.radius), int(shape.radius))
+            pygame.draw.circle(sprite.image, color+(192,), (shape.radius, shape.radius), int(shape.radius))
             pygame.draw.circle(sprite.image, color, (shape.radius, shape.radius), int(shape.radius), 1)
 
         group.draw(self.screen)
