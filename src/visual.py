@@ -86,5 +86,5 @@ class Visual(object):
     def draw_iteration_number(self, number, idx):
         right = self.iteration_area.left
         top = self.iteration_area.top + self.iteration_height * idx
-        self.draw_text(number, Visual.ITERATOIN_TEXT_COLOR, (right, top), right_align=True)
+        self.draw_text(number + " ", Visual.ITERATOIN_TEXT_COLOR, (right, top), right_align=True)
 
