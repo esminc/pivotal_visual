@@ -7,14 +7,36 @@ import sys
 from tracker import Tracker
 from visual import Visual
 
+class RunnerConfig(object):
+    def __init__(self, defaults=None):
+        self.defaults = defaults
+
+    def read(self, filename):
+        self.config = ConfigParser.ConfigParser(self.defaults)
+        self.config.read(filename)
+
+        class Section(object):
+            def __init__(self, config, section):
+                self.config = config
+                self.section = section
+
+            def get(self, option):
+                return self.config.get(self.section, option)
+
+        for s in self.config.sections():
+            exec "self.%s = Section(self.config, '%s')"%(s, s)
+
+    def get(self, *args):
+        return self.config.get(*args)
+
 def iterations_from_server(config):
-    tracker = Tracker(dbdir=config.get('tracker', 'local_store_directory'))
-    tracker.authenticate(config.get('tracker', 'username'), config.get('tracker', 'password'))
-    iterations = tracker.get_stories(config.get('tracker', 'project_id'))
+    tracker = Tracker(dbdir=config.tracker.get('local_store_directory'))
+    tracker.authenticate(config.tracker.get('username'), config.get('tracker', 'password'))
+    iterations = tracker.get_stories(config.tracker.get('project_id'))
     return iterations
 
 def iterations_from_file(config, filename):
-    tracker = Tracker(dbdir=config.get('tracker', 'local_store_directory'))
+    tracker = Tracker(dbdir=config.tracker.get('local_store_directory'))
     f = open(filename)
     contents = ''
     for l in f: contents += l
@@ -23,7 +45,7 @@ def iterations_from_file(config, filename):
     return iterations
 
 def main():
-    config = ConfigParser.ConfigParser()
+    config = RunnerConfig({'local_store_directory':''})
     config.read('config.ini')
 
     if len(sys.argv) >= 2:

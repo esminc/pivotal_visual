@@ -1,5 +1,20 @@
 [tracker]
+# Login username for pivotaltracker.com
+# username = someone@exsample.com
 username = someone@exsample.com
+
+# Login password for pivotaltracker.com
+# password = password
 password = password
-project_id = 123456789
-local_store_directory = /path/to/storefiles
+
+# The id of the project to visualize.
+# The id can be found in its URL as
+#     www.pivotaltracker.com/projects/123456
+# then the id is 123456
+# project_id = 123456
+project_id = 123456
+
+# Optional. Directory name to save project data for later use.
+# Saved data can be used as:
+# % python runner.py <saved file path>
+# local_store_directory = /path/to/storefiles

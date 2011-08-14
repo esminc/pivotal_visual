@@ -72,10 +72,14 @@ class Tracker(object):
         conn = httplib.HTTPSConnection('www.pivotaltracker.com')
         conn.request('GET', '/services/v3/projects/%s/iterations'%(project_id), '', headers)
         contents = conn.getresponse().read()
+        if self.dbdir:
+            self.save_stories(contents, project_id)
+        return self.parse_stories(contents)
+
+    def save_local(self, contents, project_id):
         f = open(self.dbdir + os.sep + "iterations.%s.%s.xml"%(project_id, time.strftime('%Y%m%d%H%M%S')), "w")
         f.write(contents)
         f.close()
-        return self.parse_stories(contents)
 
     def parse_stories(self, contents):
         parser = IterationsAndStoriesParser()
