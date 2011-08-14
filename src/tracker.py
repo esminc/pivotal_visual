@@ -73,7 +73,7 @@ class Tracker(object):
         conn.request('GET', '/services/v3/projects/%s/iterations'%(project_id), '', headers)
         contents = conn.getresponse().read()
         if self.dbdir:
-            self.save_stories(contents, project_id)
+            self.save_local(contents, project_id)
         return self.parse_stories(contents)
 
     def save_local(self, contents, project_id):
