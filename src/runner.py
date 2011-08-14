@@ -57,6 +57,8 @@ def main():
     vis.draw_iteration_boxes(len(iterations))
     for i, it in enumerate(iterations):
         #pprint(it['stories'])
+        #pprint(it['number'])
+        vis.draw_iteration_number(it['number'], i)
         vis.draw_stories_for_iteration(it['stories'], i)
 
     raw_input()

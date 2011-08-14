@@ -15,9 +15,13 @@ class Visual(object):
     STORY_WIP_COLOR = 243, 243, 109
     STORY_UNSTARTED_COLOR = 180, 180, 180
 
+    ITERATOIN_TEXT_COLOR = 255, 255, 255
+
     def start(self):
         pygame.init()
+        pygame.font.init()
         self.screen = pygame.display.set_mode((500, 800))
+        self.font = pygame.font.SysFont('', 28)
         self.drawings = {}
 
         self.iteration_area = pygame.Rect(100, 100, 300, 600)
@@ -67,4 +71,18 @@ class Visual(object):
 
         group.draw(self.screen)
         pygame.display.flip()
+
+    def draw_text(self, text, color, pos, right_align=False):
+        text_surf = self.font.render(text, True, color)
+        text_size = text_surf.get_size()
+        if right_align:
+            actual_pos = (pos[0] - text_size[0], pos[1])
+        else:
+            actual_pos = (pos[0], pos[1])
+        self.screen.blit(text_surf, actual_pos)
+
+    def draw_iteration_number(self, number, idx):
+        right = self.iteration_area.left
+        top = self.iteration_area.top + self.iteration_height * idx
+        self.draw_text(number, Visual.ITERATOIN_TEXT_COLOR, (right, top), right_align=True)
 
