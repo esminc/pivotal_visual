@@ -54,6 +54,45 @@ class IterationsAndStoriesParser(HTMLParser.HTMLParser):
             self.current[tag] = self.current_data
         self.mode = None
 
+class ProjectParser(HTMLParser.HTMLParser):
+    def __init__(self):
+        HTMLParser.HTMLParser.__init__(self)
+        self.mode = None
+        self.project = {}
+    def handle_starttag(self, tag, attrs):
+        if self.mode == "-ignore":
+            return
+        if tag == 'memberships':
+            self.mode = "-ignore"
+            return
+        if tag == 'integrations':
+            self.mode = "-ignore"
+            return
+        self.mode = tag
+        self.current_data = ''
+    def handle_data(self, data):
+        if self.mode == "-ignore":
+            return
+        if self.mode:
+            self.current_data += data
+    def handle_charref(self, name):
+        if self.mode == "-ignore":
+            return
+        if self.mode:
+            self.current_data += unichr(int(name))
+
+    def handle_endtag(self, tag):
+        if tag == 'memberships':
+            self.mode = None
+            return
+        if tag == 'integrations':
+            self.mode = None
+            return
+        if self.mode == "-ignore":
+            return
+        if self.mode:
+            self.project[tag] = self.current_data
+        self.mode = None
 
 class Tracker(object):
     def __init__(self, dbdir):
@@ -76,6 +115,13 @@ class Tracker(object):
             self.save_local(contents, project_id)
         return self.parse_stories(contents)
 
+    def get_project(self, project_id):
+        headers = {'X-TrackerToken': self.token }
+        conn = httplib.HTTPSConnection('www.pivotaltracker.com')
+        conn.request('GET', '/services/v3/projects/%s'%(project_id), '', headers)
+        contents = conn.getresponse().read()
+        return self.parse_project(contents)
+
     def save_local(self, contents, project_id):
         f = open(self.dbdir + os.sep + "iterations.%s.%s.xml"%(project_id, time.strftime('%Y%m%d%H%M%S')), "w")
         f.write(contents)
@@ -85,4 +131,9 @@ class Tracker(object):
         parser = IterationsAndStoriesParser()
         parser.feed(contents)
         return parser.iterations
+
+    def parse_project(self, contents):
+        parser = ProjectParser()
+        parser.feed(contents)
+        return parser.project
 

@@ -32,8 +32,9 @@ class RunnerConfig(object):
 def iterations_from_server(config):
     tracker = Tracker(dbdir=config.tracker.get('local_store_directory'))
     tracker.authenticate(config.tracker.get('username'), config.get('tracker', 'password'))
+    project = tracker.get_project(config.tracker.get('project_id'))
     iterations = tracker.get_stories(config.tracker.get('project_id'))
-    return iterations
+    return project, iterations
 
 def iterations_from_file(config, filename):
     tracker = Tracker(dbdir=config.tracker.get('local_store_directory'))
@@ -49,11 +50,13 @@ def main():
     config.read('config.ini')
 
     if len(sys.argv) >= 2:
+        project = None
         iterations = iterations_from_file(config, sys.argv[1])
     else:
-        iterations = iterations_from_server(config)
+        project, iterations = iterations_from_server(config)
     vis = Visual()
     vis.start()
+    vis.draw_project_info(project)
     vis.draw_iteration_boxes(len(iterations))
     for i, it in enumerate(iterations):
         #pprint(it['stories'])
