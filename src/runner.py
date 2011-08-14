@@ -59,6 +59,7 @@ def main():
         #pprint(it['stories'])
         #pprint(it['number'])
         vis.draw_iteration_number(it['number'], i)
+        vis.draw_iteration_dates(it['start'], it['finish'], i)
         vis.draw_stories_for_iteration(it['stories'], i)
 
     raw_input()

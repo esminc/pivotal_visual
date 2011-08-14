@@ -4,6 +4,8 @@ import pygame
 import random
 import time
 import math
+import datetime
+import re
 
 from layout import FillLayout
 
@@ -23,7 +25,6 @@ class Visual(object):
         pygame.font.init()
         self.screen = pygame.display.set_mode((500, 800))
         self.screen.fill(Visual.BACKGROUND_COLOR)
-        self.font = pygame.font.SysFont('', 28)
         self.drawings = {}
 
         self.iteration_area = pygame.Rect(100, 100, 300, 600)
@@ -74,17 +75,36 @@ class Visual(object):
         group.draw(self.screen)
         pygame.display.flip()
 
-    def draw_text(self, text, color, pos, right_align=False):
-        text_surf = self.font.render(text, True, color)
-        text_size = text_surf.get_size()
-        if right_align:
-            actual_pos = (pos[0] - text_size[0], pos[1])
-        else:
-            actual_pos = (pos[0], pos[1])
-        self.screen.blit(text_surf, actual_pos)
+    def draw_text(self, text, pos, size=20, color=(0,0,0), right_align=False):
+        font = pygame.font.SysFont('', size)
+        top = pos[1]
+        for line in text.split('\n')
+            text_surf = font.render(line, True, color)
+            text_size = text_surf.get_size()
+            if right_align:
+                actual_pos = (pos[0] - text_size[0], top)
+            else:
+                actual_pos = (pos[0], top)
+            self.screen.blit(text_surf, actual_pos)
+            top += text_size[1]
 
     def draw_iteration_number(self, number, idx):
         right = self.iteration_area.left
         top = self.iteration_area.top + self.iteration_height * idx
-        self.draw_text(number + " ", Visual.ITERATOIN_TEXT_COLOR, (right, top), right_align=True)
+        self.draw_text(number + " ", (right, top), size=28, color=Visual.ITERATOIN_TEXT_COLOR, right_align=True)
 
+    def draw_iteration_dates(self, start_str, finish_str, idx):
+        left = self.iteration_area.left + self.iteration_area.width
+        top = self.iteration_area.top + self.iteration_height * idx
+        start = datetime.datetime.strptime(self.strip_timezone(start_str), '%Y/%m/%d %H:%M:%S')
+        finish = datetime.datetime.strptime(self.strip_timezone(finish_str), '%Y/%m/%d %H:%M:%S') - datetime.timedelta(seconds=1)
+        text = "%04d/%02d/%02d\n - %02d/%02d"%(start.year, start.month, start.day, finish.month, finish.day)
+        self.draw_text(text, (left, top), size=18, color=Visual.ITERATOIN_TEXT_COLOR)
+
+    def strip_timezone(self, datetime):
+        # datetime.strptime() cannot parse %Z in certain environments
+        # ie. Python2.7 on Windows seems not be able to parse 'JST'
+        if re.search(' [A-Z]{3}$', datetime):
+            return datetime[:-4]
+        else:
+            return datetime
