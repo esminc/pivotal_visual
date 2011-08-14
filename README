@@ -7,6 +7,8 @@
 
 = How to use
 
+0. Install pygame from http://pygame.org/download.shtml
+
 1. First you need to write your account info and project id in your config.ini file.  Create src/config.ini copying from config.ini.sample and overwrite each entries.
 
 2. Run the program with
