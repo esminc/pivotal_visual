@@ -72,7 +72,12 @@ class Visual(object):
         pygame.display.flip()
 
     def draw_text(self, text, pos, size=20, color=(0,0,0), right_align=False):
-        font = pygame.font.SysFont('', size)
+        try:
+            font = pygame.font.SysFont('', size)
+        except MemoryError:
+            # MemoryError is raised in some environment
+            # probably related to this issue http://bugs.python.org/issue9937
+            font = pygame.font.Font(None, size)
         top = pos[1]
         for line in text.split('\n'):
             text_surf = font.render(line, True, color)
